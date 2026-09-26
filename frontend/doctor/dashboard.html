@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doctor Dashboard — Health Portal</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-role="doctor">
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">Health Portal</div>
+    <div class="role-label">Doctor Portal</div>
+    <nav>
+      <button class="nav-link active" data-section="overview">Overview</button>
+      <button class="nav-link" data-section="profile">My Profile</button>
+      <button class="nav-link" data-section="appointments">Appointments</button>
+      <button class="nav-link" data-section="patients">My Patients</button>
+      <button class="nav-link" data-section="settings">Account Settings</button>
+    </nav>
+    <button class="btn btn-outline btn-sm logout-btn" id="logoutBtn" style="color:#DCE6E1; border-color:#3A4A45;">Log out</button>
+  </aside>
+
+  <div>
+    <div class="topbar">
+      <strong>Doctor Dashboard</strong>
+      <div class="who">Signed in as <strong id="whoName">—</strong></div>
+    </div>
+
+    <div class="content">
+
+      <section class="section active" id="section-overview">
+        <div class="page-head"><h1>Today at a glance</h1><div class="vital-divider"></div></div>
+        <div class="stat-grid">
+          <div class="stat-card"><div class="num" id="statToday">0</div><div class="label">Appointments today</div></div>
+          <div class="stat-card"><div class="num" id="statPending">0</div><div class="label">Pending requests</div></div>
+          <div class="stat-card"><div class="num" id="statPatients">0</div><div class="label">Total patients</div></div>
+        </div>
+        <div class="card">
+          <h2>Quick actions</h2>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-primary" data-goto="appointments">Review appointments</button>
+            <button class="btn btn-outline" data-goto="patients">View my patients</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-profile">
+        <div class="page-head"><h1>My Profile</h1><div class="vital-divider"></div></div>
+        <div class="card">
+          <form id="profileForm" novalidate>
+            <div class="row-2">
+              <div class="field"><label for="d_name">Full name</label><input type="text" id="d_name" name="name"><div class="error"></div></div>
+              <div class="field"><label for="d_email">Email</label><input type="email" id="d_email" name="email" disabled></div>
+            </div>
+            <div class="row-2">
+              <div class="field"><label for="d_spec">Specialization</label><input type="text" id="d_spec" name="specialization"></div>
+              <div class="field"><label for="d_qual">Qualification</label><input type="text" id="d_qual" name="qualification"></div>
+            </div>
+            <div class="row-2">
+              <div class="field"><label for="d_exp">Experience (years)</label><input type="number" id="d_exp" name="experience_years" min="0"></div>
+              <div class="field"><label for="d_fee">Consultation fee (₹)</label><input type="number" id="d_fee" name="consultation_fee" min="0"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save profile</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="section" id="section-appointments">
+        <div class="page-head"><h1>Appointments</h1><div class="vital-divider"></div></div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Patient</th><th>Date &amp; Time</th><th>Reason</th><th>Status</th><th></th></tr></thead>
+            <tbody id="apptTableBody"><tr><td colspan="5" class="table-empty">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="section-patients">
+        <div class="page-head"><h1>My Patients</h1><div class="vital-divider"></div></div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Name</th><th>Contact</th><th>Gender</th><th>Blood group</th><th></th></tr></thead>
+            <tbody id="patientsTableBody"><tr><td colspan="5" class="table-empty">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="section-settings">
+        <div class="page-head"><h1>Account Settings</h1><div class="vital-divider"></div></div>
+        <div class="card">
+          <h2>Change password</h2>
+          <form id="passwordForm" novalidate>
+            <div class="row-2">
+              <div class="field"><label for="cp_current">Current password</label><input type="password" id="cp_current" name="current_password"><div class="error"></div></div>
+              <div class="field"><label for="cp_new">New password</label><input type="password" id="cp_new" name="new_password"><div class="error"></div></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Update password</button>
+          </form>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-backdrop" id="historyModal">
+  <div class="modal" style="max-width:640px; max-height:80vh; overflow-y:auto;">
+    <div class="flex-between"><h2 id="historyName">Patient history</h2><button class="close-x" data-close="historyModal">&times;</button></div>
+    <div id="historyBody"></div>
+  </div>
+</div>
+
+
+<div class="modal-backdrop" id="notesModal">
+  <div class="modal">
+    <div class="flex-between"><h2>Add Consultation Notes</h2><button class="close-x" data-close="notesModal">&times;</button></div>
+    <form id="notesForm" novalidate>
+      <input type="hidden" name="appointment_id">
+      <div class="field"><label for="n_notes">Notes</label><textarea id="n_notes" name="notes" placeholder="Diagnosis, observations, advice…"></textarea><div class="error"></div></div>
+      <div class="field"><label for="n_rx">Prescription (optional)</label><textarea id="n_rx" name="prescription" placeholder="Medicines, dosage, duration…"></textarea></div>
+      <button type="submit" class="btn btn-primary btn-block">Save &amp; mark completed</button>
+    </form>
+  </div>
+</div>
+
+<script>window.API_BASE = '../../backend/api';</script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/validation.js"></script>
+<script src="js/doctor.js"></script>
+</body>
+</html>

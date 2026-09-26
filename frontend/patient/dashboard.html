@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Dashboard — Health Portal</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-role="patient">
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">Health Portal</div>
+    <div class="role-label">Patient Portal</div>
+    <nav>
+      <button class="nav-link active" data-section="overview">Overview</button>
+      <button class="nav-link" data-section="profile">My Profile</button>
+      <button class="nav-link" data-section="book">Book Appointment</button>
+      <button class="nav-link" data-section="appointments">My Appointments</button>
+      <button class="nav-link" data-section="reports">Medical Reports</button>
+      <button class="nav-link" data-section="consultations">Consultation Records</button>
+      <button class="nav-link" data-section="settings">Account Settings</button>
+    </nav>
+    <button class="btn btn-outline btn-sm logout-btn" id="logoutBtn" style="color:#DCE6E1; border-color:#3A4A45;">Log out</button>
+  </aside>
+
+  <div>
+    <div class="topbar">
+      <strong>Patient Dashboard</strong>
+      <div class="who">Signed in as <strong id="whoName">—</strong></div>
+    </div>
+
+    <div class="content">
+
+      <section class="section active" id="section-overview">
+        <div class="page-head">
+          <h1>Welcome back</h1>
+          <div class="vital-divider"></div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card"><div class="num" id="statUpcoming">0</div><div class="label">Upcoming appointments</div></div>
+          <div class="stat-card"><div class="num" id="statReports">0</div><div class="label">Medical reports uploaded</div></div>
+          <div class="stat-card"><div class="num" id="statConsults">0</div><div class="label">Consultation records</div></div>
+        </div>
+        <div class="card">
+          <h2>Quick actions</h2>
+          <div class="sub">Jump straight to what you need.</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-primary" data-goto="book">Book an appointment</button>
+            <button class="btn btn-outline" data-goto="reports">Upload a report</button>
+            <button class="btn btn-outline" data-goto="appointments">View appointments</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="section-profile">
+        <div class="page-head"><h1>My Profile</h1><div class="vital-divider"></div></div>
+        <div class="card">
+          <form id="profileForm" novalidate>
+            <div class="row-2">
+              <div class="field"><label for="p_name">Full name</label><input type="text" id="p_name" name="name"><div class="error"></div></div>
+              <div class="field"><label for="p_email">Email</label><input type="email" id="p_email" name="email" disabled></div>
+            </div>
+            <div class="row-2">
+              <div class="field"><label for="p_phone">Phone</label><input type="text" id="p_phone" name="phone"><div class="error"></div></div>
+              <div class="field"><label for="p_dob">Date of birth</label><input type="date" id="p_dob" name="dob"></div>
+            </div>
+            <div class="row-2">
+              <div class="field">
+                <label for="p_gender">Gender</label>
+                <select id="p_gender" name="gender">
+                  <option value="">Select…</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="field"><label for="p_blood">Blood group</label><input type="text" id="p_blood" name="blood_group" placeholder="e.g. O+"></div>
+            </div>
+            <div class="field"><label for="p_address">Address</label><textarea id="p_address" name="address"></textarea></div>
+            <button type="submit" class="btn btn-primary">Save profile</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="section" id="section-book">
+        <div class="page-head"><h1>Book an Appointment</h1><div class="vital-divider"></div></div>
+        <div class="card">
+          <form id="bookForm" novalidate>
+            <div class="field">
+              <label for="b_doctor">Choose a doctor</label>
+              <select id="b_doctor" name="doctor_id"><option value="">Loading doctors…</option></select>
+              <div class="error"></div>
+            </div>
+            <div class="row-2">
+              <div class="field"><label for="b_date">Date</label><input type="date" id="b_date" name="appointment_date"><div class="error"></div></div>
+              <div class="field"><label for="b_time">Time</label><input type="time" id="b_time" name="appointment_time"><div class="error"></div></div>
+            </div>
+            <div class="field"><label for="b_reason">Reason for visit</label><textarea id="b_reason" name="reason" placeholder="Briefly describe your symptoms or reason for the visit"></textarea></div>
+            <button type="submit" class="btn btn-primary">Request appointment</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="section" id="section-appointments">
+        <div class="page-head"><h1>My Appointments</h1><div class="vital-divider"></div></div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Doctor</th><th>Date &amp; Time</th><th>Reason</th><th>Status</th><th></th></tr></thead>
+            <tbody id="apptTableBody"><tr><td colspan="5" class="table-empty">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="section-reports">
+        <div class="page-head"><h1>Medical Reports</h1><div class="vital-divider"></div></div>
+        <div class="card">
+          <h2>Upload a report</h2>
+          <div class="sub">PDF, JPG or PNG — up to 5 MB.</div>
+          <form id="uploadForm" novalidate>
+            <div class="row-2">
+              <div class="field"><label for="r_file">File</label><input type="file" id="r_file" name="report_file" accept=".pdf,.jpg,.jpeg,.png"><div class="error"></div></div>
+              <div class="field"><label for="r_desc">Description</label><input type="text" id="r_desc" name="description" placeholder="e.g. Blood test, March 2026"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload</button>
+          </form>
+        </div>
+        <div class="card">
+          <h2>Uploaded reports</h2>
+          <table>
+            <thead><tr><th>File</th><th>Description</th><th>Uploaded</th><th></th></tr></thead>
+            <tbody id="reportsTableBody"><tr><td colspan="4" class="table-empty">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="section-consultations">
+        <div class="page-head"><h1>Consultation Records</h1><div class="vital-divider"></div></div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Doctor</th><th>Date</th><th>Notes</th><th>Prescription</th></tr></thead>
+            <tbody id="consultTableBody"><tr><td colspan="4" class="table-empty">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="section-settings">
+        <div class="page-head"><h1>Account Settings</h1><div class="vital-divider"></div></div>
+        <div class="card">
+          <h2>Change password</h2>
+          <form id="passwordForm" novalidate>
+            <div class="row-2">
+              <div class="field"><label for="cp_current">Current password</label><input type="password" id="cp_current" name="current_password"><div class="error"></div></div>
+              <div class="field"><label for="cp_new">New password</label><input type="password" id="cp_new" name="new_password"><div class="error"></div></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Update password</button>
+          </form>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script>window.API_BASE = '../../backend/api';</script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/validation.js"></script>
+<script src="js/patient.js"></script>
+</body>
+</html>

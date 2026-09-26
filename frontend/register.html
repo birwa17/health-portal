@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — Health Portal</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-role="patient">
+
+<div class="auth-shell">
+  <aside class="auth-aside">
+    <div class="brand">Health Portal</div>
+    <div class="pitch">
+      <h1>Your health record, organized.</h1>
+      <p>Create a patient account to book appointments, upload reports, and keep every consultation note in one place.</p>
+    </div>
+    <p class="muted" style="color:#9FB2AC; font-size:0.78rem;">Health Consultation &amp; Appointment Management Portal</p>
+  </aside>
+
+  <main class="auth-main">
+    <div class="auth-card">
+      <div class="eyebrow">New patient</div>
+      <h1>Create your account</h1>
+      <div class="vital-divider"></div>
+
+      <form id="registerForm" novalidate>
+        <div class="field">
+          <label for="name">Full name</label>
+          <input type="text" id="name" name="name" placeholder="Jane Doe">
+          <div class="error"></div>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com">
+          <div class="error"></div>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input type="text" id="phone" name="phone" placeholder="9876543210">
+            <div class="error"></div>
+          </div>
+          <div class="field">
+            <label for="dob">Date of birth</label>
+            <input type="date" id="dob" name="dob">
+            <div class="error"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="gender">Gender</label>
+          <select id="gender" name="gender">
+            <option value="">Select…</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="At least 6 characters">
+          <div class="error"></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Create account</button>
+      </form>
+
+      <p class="muted" style="margin-top:20px; font-size:0.85rem;">
+        Already registered? <a href="login.html">Log in</a>
+      </p>
+    </div>
+  </main>
+</div>
+
+<script>window.API_BASE = '../backend/api';</script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/validation.js"></script>
+<script>
+const form = document.getElementById('registerForm');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const valid = validateForm(form, {
+    name: [required],
+    email: [required, isEmail],
+    phone: [isPhone],
+    password: [required, minLen(6)],
+  });
+  if (!valid) return;
+
+  const btn = form.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'Creating account…';
+
+  const res = await apiCall('auth', 'register', {
+    name: form.name.value.trim(),
+    email: form.email.value.trim(),
+    phone: form.phone.value.trim(),
+    dob: form.dob.value,
+    gender: form.gender.value,
+    password: form.password.value,
+  });
+
+  btn.disabled = false;
+  btn.textContent = 'Create account';
+
+  if (!res.success) {
+    toast(res.message, 'error');
+    return;
+  }
+
+  toast('Account created! Redirecting to login…', 'success');
+  setTimeout(() => (window.location.href = 'login.html'), 1200);
+});
+</script>
+
+</body>
+</html>

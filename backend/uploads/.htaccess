@@ -1,0 +1,4 @@
+# Prevent any uploaded file from ever being executed as a script.
+php_flag engine off
+AddType text/plain .php .php3 .phtml .pht
+Options -Indexes
